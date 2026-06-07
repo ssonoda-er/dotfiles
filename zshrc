@@ -10,7 +10,10 @@ export XDG_CONFIG_HOME=$HOME/.config
 export XDG_DATA_HOME=$HOME/.local/share
 export XDG_STATE_HOME=$HOME/.local/state
 export XDG_BIN_HOME=$HOME/.local/bin
-export PATH="$XDG_BIN_HOME:$PATH"
+case ":$PATH:" in
+  *":$XDG_BIN_HOME:"*) ;;
+  *) export PATH="$XDG_BIN_HOME:$PATH" ;;
+esac
 
 export HISTFILE=$HOME/.zhistory
 export HISTSIZE=10000
@@ -36,6 +39,11 @@ setopt no_flow_control
 
 PROMPT='%(?.🌲.🪾) %F{yellow}%*%f %F{cyan}%~%f %# '
 
+# completion
+# compinit auto-generates/reuses the .zcompdump cache, and regenerates it
+# only when needed (e.g. the set of completion functions changed).
+autoload -Uz compinit && compinit
+
 # Homebrew
 if [ -f /opt/homebrew/bin/brew ]; then eval "$(/opt/homebrew/bin/brew shellenv zsh)"; fi
 
@@ -49,7 +57,10 @@ if type mise >/dev/null; then eval "$(mise activate zsh)"; fi
 export CLAUDE_CONFIG_DIR="$XDG_CONFIG_HOME/claude"
 
 # LM Studio CLI
-export PATH="$PATH:$HOME/.lmstudio/bin"
+case ":$PATH:" in
+  *":$HOME/.lmstudio/bin:"*) ;;
+  *) export PATH="$PATH:$HOME/.lmstudio/bin" ;;
+esac
 
 # pnpm
 export PNPM_HOME="$HOME/.local/share/pnpm"
@@ -62,7 +73,7 @@ esac
 # "open" command for WSL
 if [[ "$(uname -r)" == *-microsoft-standard-WSL2 ]]; then
 	function open() {
-		explorer.exe $(wslpath -w $1)
+		explorer.exe "$(wslpath -w "$1")"
 	}
 fi
 
@@ -73,5 +84,3 @@ else
 fi
 
 autoload -Uz colors && colors
-autoload -Uz compinit && compinit
-
