@@ -16,8 +16,6 @@ export HISTFILE=$HOME/.zhistory
 export HISTSIZE=10000
 export SAVEHIST=10000
 
-alias ls='ls -G'
-
 zstyle ':completion:*' menu select
 zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin /usr/sbin /usr/bin /sbin /bin
 
@@ -68,5 +66,12 @@ if [[ "$(uname -r)" == *-microsoft-standard-WSL2 ]]; then
 	}
 fi
 
+if [[ $OSTYPE == darwin* ]]; then
+	alias ls='ls -G'
+else
+	alias ls='ls --color=auto'
+fi
+
 autoload -Uz colors && colors
 autoload -Uz compinit && compinit
+
